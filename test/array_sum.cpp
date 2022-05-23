@@ -1,17 +1,23 @@
+#include "tachy/vilib.h"
+
 #include <cstdint>
 #include <cassert>
-#include "tachy/vilib.h"
+#include <vector>
 #include "test_assert.h"
 
 bool test1()
 {
-    static const unsigned int SIZE = 1560;
+    static const std::size_t SIZE = 1560;
     uint32_t array[SIZE];
-    for (unsigned int i = 0; i < SIZE; ++i) {
+    for (std::size_t i = 0; i < SIZE; ++i) {
         array[i] = i;
     }
 
     uint32_t sum = vil::array_sum(array, SIZE);
+
+    ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
+
+    sum = vil::array_sum(std::span{array, SIZE});
 
     ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
 
@@ -20,13 +26,28 @@ bool test1()
 
 bool test2()
 {
-    static const unsigned int SIZE = 1560;
+    static const std::size_t SIZE = 1560;
     double array[SIZE];
-    for (unsigned int i = 0; i < SIZE; ++i) {
+    for (std::size_t i = 0; i < SIZE; ++i) {
         array[i] = i;
     }
 
     double sum = vil::array_sum(array, SIZE);
+
+    ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
+
+    return true;
+}
+
+bool test3()
+{
+    static const std::size_t SIZE = 1560;
+    std::vector<float> array(SIZE);
+    for (std::size_t i = 0; i < SIZE; ++i) {
+        array[i] = i;
+    }
+
+    float sum = vil::array_sum<float>(array);
 
     ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
 
@@ -41,6 +62,7 @@ int main()
 {
     assert(test1());
     assert(test2());
+    assert(test3());
 
     return 0;
 }

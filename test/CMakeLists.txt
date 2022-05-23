@@ -6,7 +6,9 @@ set(TEST_CC_FLAGS
 )
 
 set(tests
-    array_sum
+    array_sum array_and
+    arrays_and #or xor
+    arrays_add arrays_mul
 )
 
 #set(atomic4_cc_flags -std=c11 -latomic)
