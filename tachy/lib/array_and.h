@@ -28,7 +28,7 @@ T array_and(const T* array, std::size_t nr_elem)
 /// span can be C array or STL container.
 ///
 template<typename T>
-T array_and(std::span<T> array)
+T array_and(std::span<const T> array)
 {
     return vil::array_and(array.data(), array.size());
 }
@@ -57,7 +57,7 @@ void arrays_and(T* dst_array, const T* array1, const T* array2, std::size_t nr_e
 }
 
 template<typename T>
-void arrays_and(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_and(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());

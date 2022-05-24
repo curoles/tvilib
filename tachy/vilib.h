@@ -63,6 +63,25 @@ VTDst hsum(VT v)
 namespace insn {
 
 template<typename VT>
+VT hmsum(VT v1, VT v2)
+{
+    using T = tvx::get_base<VT>::type;
+
+    if constexpr(std::is_floating_point<T>::value) {
+        return tvx::hmsumso(v1, v2);
+    }
+    else if constexpr(std::is_signed<T>::value) {
+        return tvx::hmsum(v1, v2);
+    }
+    else {
+        return tvx::hmsum(v1, v2);
+    }
+}
+
+}
+namespace insn {
+
+template<typename VT>
 VT hmax(VT v)
 {
     using T = tvx::get_base<VT>::type;
@@ -75,6 +94,25 @@ VT hmax(VT v)
     }
     else {
         return tvx::hmax(v);
+    }
+}
+
+}
+namespace insn {
+
+template<typename VT>
+VT hmin(VT v)
+{
+    using T = tvx::get_base<VT>::type;
+
+    if constexpr(std::is_floating_point<T>::value) {
+        return tvx::hmin(v); //TODO hminn?
+    }
+    else if constexpr(std::is_signed<T>::value) {
+        return tvx::hmins(v);
+    }
+    else {
+        return tvx::hmin(v);
     }
 }
 
@@ -106,11 +144,55 @@ TRes array_sum(const T* array, std::size_t nr_elem)
 }
 
 template<typename T, typename TRes=T>
-TRes array_sum(std::span<T> array)
+TRes array_sum(std::span<const T> array)
 {
     return vil::array_sum(array.data(), array.size());
 }
 
+/// Sum of a[i]*b[i] elements.
+///
+///
+template<typename T, typename TRes=T>
+TRes arrays_msum(const T* array1, const T* array2, std::size_t nr_elem)
+{
+    array_info<T> a(nr_elem);
+    using VT = array_info<T>::VT;
+
+    TRes sum {0};
+
+    for (std::size_t i = 0; i < a.nr_chunks; ++i) {
+        VT v1 = *(VT*)&array1[i*a.VNR_ELEM];
+        VT v2 = *(VT*)&array2[i*a.VNR_ELEM];
+        sum += vil::insn::hmsum(v1, v2)[0];
+    }
+
+    //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
+    for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
+        sum += array1[i] * array2[i];
+    }
+
+    return sum;
+}
+
+template<typename T, typename TRes=T>
+TRes arrays_msum(const std::span<const T> array1, const std::span<const T> array2)
+{
+    assert(array2.size() >= array1.size());
+
+    return vil::arrays_msum(array1.data(), array2.data(), array1.size());
+}
+
+template<typename T, typename TRes=T>
+TRes arrays_inner_product(std::span<const T> array1, std::span<const T> array2)
+{
+    return vil::arrays_msum<T,TRes>(array1, array2);
+}
+
+template<typename T, typename TRes=T>
+TRes array_norm(std::span<const T> array)
+{
+    return sqrt(vil::arrays_inner_product<T,TRes>(array, array));
+}
 
 /// Reduction AND of all elements.
 ///
@@ -141,7 +223,7 @@ T array_and(const T* array, std::size_t nr_elem)
 /// span can be C array or STL container.
 ///
 template<typename T>
-T array_and(std::span<T> array)
+T array_and(std::span<const T> array)
 {
     return vil::array_and(array.data(), array.size());
 }
@@ -170,7 +252,7 @@ void arrays_and(T* dst_array, const T* array1, const T* array2, std::size_t nr_e
 }
 
 template<typename T>
-void arrays_and(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_and(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());
@@ -203,9 +285,39 @@ TRes array_find_max(const T* array, std::size_t nr_elem)
 }
 
 template<typename T, typename TRes=T>
-TRes array_find_max(std::span<T> array)
+TRes array_find_max(std::span<const T> array)
 {
     return vil::array_find_max(array.data(), array.size());
+}
+
+/// Find element with minimum value.
+///
+///
+template<typename T, typename TRes=T>
+TRes array_find_min(const T* array, std::size_t nr_elem)
+{
+    array_info<T> a(nr_elem);
+    using VT = array_info<T>::VT;
+
+    TRes minel {array[0]};
+
+    for (std::size_t i = 0; i < a.nr_chunks; ++i) {
+        VT v = *(VT*)&array[i*a.VNR_ELEM];
+        minel = std::min(minel, vil::insn::hmin(v)[0]);
+    }
+
+    //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
+    for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
+        minel = std::min(minel, array[i]);
+    }
+
+    return minel;
+}
+
+template<typename T, typename TRes=T>
+TRes array_find_min(std::span<const T> array)
+{
+    return vil::array_find_min(array.data(), array.size());
 }
 
 /// add elements of 2 arrays.
@@ -232,7 +344,7 @@ void arrays_add(T* dst_array, const T* array1, const T* array2, std::size_t nr_e
 }
 
 template<typename T>
-void arrays_add(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_add(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());
@@ -263,7 +375,7 @@ void arrays_mul(T* dst_array, const T* array1, const T* array2, std::size_t nr_e
 }
 
 template<typename T>
-void arrays_mul(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_mul(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());
@@ -294,7 +406,7 @@ void arrays_add_abs(T* dst_array, const T* array1, const T* array2, std::size_t 
 }
 
 template<typename T>
-void arrays_add_abs(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_add_abs(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());

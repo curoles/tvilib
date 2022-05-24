@@ -8,9 +8,9 @@ import jinja2
 
 parts = [
     'header.h',
-    'wrap/hsum.h', 'wrap/hmax.h',
-    'array_sum.h', 'array_and.h',
-    'array_find_max.h',
+    'wrap/hsum.h', 'wrap/hmsum.h', 'wrap/hmax.h', 'wrap/hmin.h',
+    'array_sum.h', 'arrays_msum.h', 'array_and.h',
+    'array_find_max.h', 'array_find_min.h',
     'arrays_add.h', 'arrays_mul.h',
     'arrays_add_abs.h',
     'footer.h'

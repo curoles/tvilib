@@ -1,32 +1,30 @@
-/// Sum of all elements.
+/// Find element with minimum value.
 ///
-/// It is recommended to use
-/// sizeof(TRes) = 2 * sizeof(T) for integral types.
 ///
 template<typename T, typename TRes=T>
-TRes array_sum(const T* array, std::size_t nr_elem)
+TRes array_find_min(const T* array, std::size_t nr_elem)
 {
     array_info<T> a(nr_elem);
     using VT = array_info<T>::VT;
 
-    TRes sum {0};
+    TRes minel {array[0]};
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v = *(VT*)&array[i*a.VNR_ELEM];
-        sum += vil::insn::hsum(v)[0];
+        minel = std::min(minel, vil::insn::hmin(v)[0]);
     }
 
     //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
     for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
-        sum += array[i];
+        minel = std::min(minel, array[i]);
     }
 
-    return sum;
+    return minel;
 }
 
 template<typename T, typename TRes=T>
-TRes array_sum(std::span<const T> array)
+TRes array_find_min(std::span<const T> array)
 {
-    return vil::array_sum(array.data(), array.size());
+    return vil::array_find_min(array.data(), array.size());
 }
 

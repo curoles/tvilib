@@ -7,9 +7,10 @@ set(TEST_CC_FLAGS
 
 set(tests
     array_sum array_and
-    array_find_max
+    array_find_max array_find_min
     arrays_and #or xor
     arrays_add arrays_mul
+    arrays_msum
 )
 
 #set(atomic4_cc_flags -std=c11 -latomic)

@@ -22,7 +22,7 @@ void arrays_mul(T* dst_array, const T* array1, const T* array2, std::size_t nr_e
 }
 
 template<typename T>
-void arrays_mul(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_mul(std::span<T> dst_array, std::span<const T> array1, std::span<const T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());

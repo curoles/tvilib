@@ -17,7 +17,7 @@ bool test1()
 
     ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
 
-    sum = vil::array_sum(std::span{array, SIZE});
+    sum = vil::array_sum(std::span<const uint32_t>{array, SIZE});
 
     ASSERT(sum == (SIZE-1)*(SIZE/2), "fail");
 

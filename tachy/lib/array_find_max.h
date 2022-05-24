@@ -23,7 +23,7 @@ TRes array_find_max(const T* array, std::size_t nr_elem)
 }
 
 template<typename T, typename TRes=T>
-TRes array_find_max(std::span<T> array)
+TRes array_find_max(std::span<const T> array)
 {
     return vil::array_find_max(array.data(), array.size());
 }
