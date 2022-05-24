@@ -7,6 +7,7 @@ set(TEST_CC_FLAGS
 
 set(tests
     array_sum array_and
+    array_find_max
     arrays_and #or xor
     arrays_add arrays_mul
 )

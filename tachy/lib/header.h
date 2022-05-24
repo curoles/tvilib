@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include <span>
+#include <cmath>
 #include <cassert>
 #include <cstdio>
 #include <vxintrin.hpp>

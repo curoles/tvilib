@@ -8,15 +8,18 @@ import jinja2
 
 parts = [
     'header.h',
-    'wrap/hsum.h',
+    'wrap/hsum.h', 'wrap/hmax.h',
     'array_sum.h', 'array_and.h',
+    'array_find_max.h',
     'arrays_add.h', 'arrays_mul.h',
+    'arrays_add_abs.h',
     'footer.h'
     ]
 
 arrays_binary_ops = [
-    ['arrays_add.h', 'add', 'tvx::vadd', '+'],
-    ['arrays_mul.h', 'mul', 'tvx::vmul', '*']
+    ['arrays_add.h', 'add', 'tvx::vadd', 'array1[i] + array2[i]'],
+    ['arrays_mul.h', 'mul', 'tvx::vmul', 'array1[i] * array2[i]'],
+    ['arrays_add_abs.h', 'add_abs', 'tvx::vadda', 'std::abs(array1[i]) + std::abs(array2[i])'],
     ]
 
 def agglomerate(wrkdir: Path, parts: []):

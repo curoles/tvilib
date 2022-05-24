@@ -7,7 +7,7 @@
 
 bool test1()
 {
-    static const std::size_t SIZE = 1560;
+    static const std::size_t SIZE = 16*2+4;
     uint32_t array[SIZE];
     for (std::size_t i = 0; i < SIZE; ++i) {
         array[i] = i;
@@ -26,7 +26,7 @@ bool test1()
 
 bool test2()
 {
-    static const std::size_t SIZE = 1560;
+    static const std::size_t SIZE = 8*2+4;
     double array[SIZE];
     for (std::size_t i = 0; i < SIZE; ++i) {
         array[i] = i;
@@ -41,7 +41,7 @@ bool test2()
 
 bool test3()
 {
-    static const std::size_t SIZE = 1560;
+    static const std::size_t SIZE = 16*2+4;
     std::vector<float> array(SIZE);
     for (std::size_t i = 0; i < SIZE; ++i) {
         array[i] = i;

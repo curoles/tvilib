@@ -1,8 +1,8 @@
-/// {{name}} elements of 2 arrays.
+/// add_abs elements of 2 arrays.
 ///
 ///
 template<typename T>
-void arrays_{{name}}(T* dst_array, const T* array1, const T* array2, std::size_t nr_elem)
+void arrays_add_abs(T* dst_array, const T* array1, const T* array2, std::size_t nr_elem)
 {
     array_info<T> a(nr_elem);
     using VT = array_info<T>::VT;
@@ -10,23 +10,22 @@ void arrays_{{name}}(T* dst_array, const T* array1, const T* array2, std::size_t
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v1 = *(VT*)&array1[i*a.VNR_ELEM];
         VT v2 = *(VT*)&array2[i*a.VNR_ELEM];
-        VT dv = {{vop}}(v1, v2);
+        VT dv = tvx::vadda(v1, v2);
         //FIXME tvx::vst((VT*)&dst_array[i*a.VNR_ELEM], /*P0*/tvx::_pmask(63/*VSZ1*/), dv);
         __builtin_memcpy(&dst_array[i*a.VNR_ELEM], &dv, sizeof(dv));
     }
 
     //FIXME TODO once hand intrinsic has mask, rewrite with mask
     for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
-        dst_array[i] = {{op}};
+        dst_array[i] = std::abs(array1[i]) + std::abs(array2[i]);
     }
 }
 
 template<typename T>
-void arrays_{{name}}(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
+void arrays_add_abs(std::span<T> dst_array, std::span<T> array1, std::span<T> array2)
 {
     assert(array2.size() >= array1.size());
     assert(dst_array.size() >= array1.size());
 
-    vil::arrays_{{name}}(dst_array.data(), array1.data(), array2.data(), array1.size());
+    vil::arrays_add_abs(dst_array.data(), array1.data(), array2.data(), array1.size());
 }
-

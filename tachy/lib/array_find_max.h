@@ -1,32 +1,30 @@
-/// Sum of all elements.
+/// Find element with maximum value.
 ///
-/// It is recommended to use
-/// sizeof(TRes) = 2 * sizeof(T) for integral types.
 ///
 template<typename T, typename TRes=T>
-TRes array_sum(const T* array, std::size_t nr_elem)
+TRes array_find_max(const T* array, std::size_t nr_elem)
 {
     array_info<T> a(nr_elem);
     using VT = array_info<T>::VT;
 
-    TRes sum {0};
+    TRes maxel {array[0]};
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v = *(VT*)&array[i*a.VNR_ELEM];
-        sum += vil::insn::hsum(v)[0];
+        maxel = std::max(maxel, vil::insn::hmax(v)[0]);
     }
 
     //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
     for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
-        sum += array[i];
+        maxel = std::max(maxel, array[i]);
     }
 
-    return sum;
+    return maxel;
 }
 
 template<typename T, typename TRes=T>
-TRes array_sum(std::span<T> array)
+TRes array_find_max(std::span<T> array)
 {
-    return vil::array_sum(array.data(), array.size());
+    return vil::array_find_max(array.data(), array.size());
 }
 
