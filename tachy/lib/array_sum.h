@@ -12,12 +12,12 @@ TRes array_sum(const T* array, std::size_t nr_elem)
     TRes sum {0};
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
-        VT v = *(VT*)&array[i*a.VNR_ELEM];
+        VT v = *(VT*)&array[i*a.NR_ELEM];
         sum += vil::insn::hsum(v)[0];
     }
 
     //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
-    for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
+    for (std::size_t i = a.nr_chunks*a.NR_ELEM; i < a.nr_elem; ++i) {
         sum += array[i];
     }
 

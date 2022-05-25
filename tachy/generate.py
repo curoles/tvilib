@@ -11,15 +11,16 @@ parts = [
     'wrap/hsum.h', 'wrap/hmsum.h', 'wrap/hmax.h', 'wrap/hmin.h',
     'array_sum.h', 'arrays_msum.h', 'array_and.h',
     'array_find_max.h', 'array_find_min.h',
-    'arrays_add.h', 'arrays_mul.h',
+    'arrays_add.h', 'arrays_mul.h', 'arrays_and.h',
     'arrays_add_abs.h',
     'footer.h'
     ]
 
 arrays_binary_ops = [
-    ['arrays_add.h', 'add', 'tvx::vadd', 'array1[i] + array2[i]'],
-    ['arrays_mul.h', 'mul', 'tvx::vmul', 'array1[i] * array2[i]'],
-    ['arrays_add_abs.h', 'add_abs', 'tvx::vadda', 'std::abs(array1[i]) + std::abs(array2[i])'],
+    ['arrays_add.h', 'add', 'tvx::vadd'],
+    ['arrays_mul.h', 'mul', 'tvx::vmul'],
+    ['arrays_add_abs.h', 'add_abs', 'tvx::vadda'],
+    ['arrays_and.h', 'and', 'tvx::vand'],
     ]
 
 def agglomerate(wrkdir: Path, parts: []):
@@ -32,7 +33,7 @@ def generate_arrays_binary_operations(wrkdir: Path):
     env = jinja2.Environment(loader=jinja2.PackageLoader("generate"))
     template = env.get_template("arrays_bop.h")
     for op in arrays_binary_ops:
-        txt = template.render(name=op[1], vop=op[2], op=op[3])
+        txt = template.render(name=op[1], vop=op[2])
         with open(wrkdir / 'lib' / op[0], 'w') as file:
             file.write(txt)
 

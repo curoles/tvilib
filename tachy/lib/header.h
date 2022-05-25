@@ -16,26 +16,43 @@ template <> struct make< int64_t, 2> {typedef tvx::S64x2  type;};
 template <> struct make< int64_t, 4> {typedef tvx::S64x4  type;};
 template <> struct make< int64_t, 8> {typedef tvx::S64x8  type;};
 
+static inline void
+__attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
+vst(F64x8* a, __mask_t b, F64x8 c) {
+    __builtin_tachy_vst8_512(a, b, (tvx::U64x8)c);
+}
+
+static inline F64x8
+__attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
+vld(__mask_t a, F64x8* b) {
+    return (F64x8) __builtin_tachy_vld8_512(a, b);
+}
+
+using pmask_t = __mask_t;
 }
 
 namespace vil {
 
-constexpr std::size_t VSZ1 = 512 / 8;
 
-//constexpr __mask_t P0 = (__mask_t)((uint8_t)0x0 - (/*__mask_t*/tvx::U8x16){});
-//constexpr __mask_t PMASK0 = tvx::_pmask(VSZ1); (__mask_t)((uint8_t)0xff - (tvx::U8x16){});
+template<typename T, std::size_t VLEN = 512>
+struct array_info
+{
+    static constexpr std::size_t VSZ = VLEN / 8;
 
-template<typename T>
-struct array_info {
+    static constexpr std::size_t NR_ELEM = VSZ / sizeof(T);
+
+    using VT = tvx::make<T,NR_ELEM>::type;
+
     array_info(std::size_t nr_elem):nr_elem(nr_elem){}
 
     const std::size_t nr_elem;
 
-    static constexpr std::size_t VNR_ELEM = VSZ1 / sizeof(T);
-
     const std::size_t nr_bytes = nr_elem * sizeof(T);
 
-    const std::size_t nr_chunks = nr_bytes / VSZ1;
+    const std::size_t nr_chunks = nr_bytes / VSZ;
 
-    using VT = tvx::make<T,VNR_ELEM>::type;
+    const std::size_t nr_tail_bytes = nr_bytes - (nr_chunks * VSZ);
+
+    const std::size_t nr_tail_elem = nr_tail_bytes / sizeof(T);
+
 };

@@ -10,12 +10,12 @@ TRes array_find_max(const T* array, std::size_t nr_elem)
     TRes maxel {array[0]};
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
-        VT v = *(VT*)&array[i*a.VNR_ELEM];
+        VT v = *(VT*)&array[i*a.NR_ELEM];
         maxel = std::max(maxel, vil::insn::hmax(v)[0]);
     }
 
     //FIXME TODO once hsum intrinsic has mask, rewrite with hsum+mask
-    for (std::size_t i = a.nr_chunks*a.VNR_ELEM; i < a.nr_elem; ++i) {
+    for (std::size_t i = a.nr_chunks*a.NR_ELEM; i < a.nr_elem; ++i) {
         maxel = std::max(maxel, array[i]);
     }
 
