@@ -5,7 +5,7 @@
 #include <vector>
 #include "test_assert.h"
 
-bool test1()
+static bool test1()
 {
     static const std::size_t SIZE = 16*2+4;
     uint32_t array[SIZE];
@@ -24,7 +24,7 @@ bool test1()
     return true;
 }
 
-bool test2()
+static bool test2()
 {
     static const std::size_t SIZE = 8*2+4;
     double array[SIZE];
@@ -39,7 +39,7 @@ bool test2()
     return true;
 }
 
-bool test3()
+static bool test3()
 {
     static const std::size_t SIZE = 16*2+4;
     std::vector<float> array(SIZE);

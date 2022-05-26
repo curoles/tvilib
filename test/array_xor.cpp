@@ -10,13 +10,13 @@ static bool test1()
     std::array<uint64_t, SIZE> array;
 
     for (std::size_t i = 0; i < SIZE; ++i) {
-        array[i] = ~((1ul << (i+1)) - 1);
+        array[i] = (1ul << i);
     }
 
-    uint64_t res = vil::array_and<uint64_t>(array);
+    uint64_t res = vil::array_xor<uint64_t>(array);
 
-    ASSERT(res == ~((1ul << SIZE) - 1),
-        "fail %lx vs %lx", res, ~((1ul << SIZE) - 1));
+    ASSERT(res == ((1ul << SIZE) - 1),
+        "fail %lx vs %lx", res, ((1ul << SIZE) - 1));
 
     return true;
 }
