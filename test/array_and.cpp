@@ -5,7 +5,7 @@
 
 static bool test1()
 {
-    static const std::size_t SIZE = 8*2 + 3;
+    static const std::size_t SIZE = 8*5 + 5;
 
     std::array<uint64_t, SIZE> array;
 

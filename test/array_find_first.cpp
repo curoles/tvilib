@@ -5,18 +5,18 @@
 
 static bool test1()
 {
-    static const std::size_t SIZE = 8*4 + 3;
+    static const std::size_t SIZE = 8*3 + 3;
 
     std::array<uint64_t, SIZE> array;
 
     for (std::size_t i = 0; i < SIZE; ++i) {
-        array[i] = (1ul << i);
+        array[i] = i;
     }
 
-    uint64_t res = vil::array_xor<uint64_t>(array);
+    std::size_t index = vil::array_find_first<uint64_t>(23, array).value_or(0);
 
-    ASSERT(res == ((1ul << SIZE) - 1),
-        "fail %lx vs %lx", res, ((1ul << SIZE) - 1));
+    ASSERT(index == 23ul,
+        "fail %lu vs %lu", index, 23ul);
 
     return true;
 }

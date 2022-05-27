@@ -12,10 +12,22 @@ T array_and(const T* array, std::size_t nr_elem)
 
     T res { ~0ul  };
 
+#if 0
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT sv = *(VT*)&array[i*a.NR_ELEM];
         res &= tvx::hand(sv)[0];
     }
+#else
+    for (std::size_t i = 0; (i+1) < a.nr_chunks; i += 2) {
+        VT sv1 = *(VT*)&array[i*a.NR_ELEM];
+        VT sv2 = *(VT*)&array[(i+1)*a.NR_ELEM];
+        res &= tvx::hand(sv1)[0] & tvx::hand(sv2)[0];
+    }
+    if (a.nr_chunks % 2) {
+        VT sv = *(VT*)&array[(a.nr_chunks-1)*a.NR_ELEM];
+        res &= tvx::hand(sv)[0];
+    }
+#endif
 
     //FIXME TODO once intrinsic has mask, rewrite with mask
     for (std::size_t i = a.nr_chunks*a.NR_ELEM; i < a.nr_elem; ++i) {

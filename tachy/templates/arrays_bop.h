@@ -10,6 +10,8 @@ void arrays_{{name}}(T* dst_array, const T* array1, const T* array2, std::size_t
     AI a(nr_elem);
     using VT = AI::VT;
 
+    #pragma GCC unroll 2
+    #pragma GCC ivdep // asserts that there are no loop-carried dependencies
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v1 = *(VT*)&array1[i*a.NR_ELEM];
         VT v2 = *(VT*)&array2[i*a.NR_ELEM];

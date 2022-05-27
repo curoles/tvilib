@@ -7,8 +7,8 @@ set(TEST_CC_FLAGS
 
 set(tests
     array_sum array_and array_or array_xor
-    array_find_max array_find_min
-    array_mul_pair_sum
+    array_find_max array_find_min array_find_first
+    array_mul_pair_sum array_product
     arrays_and #or xor
     arrays_add arrays_mul
     arrays_msum

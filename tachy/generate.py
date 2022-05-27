@@ -12,8 +12,9 @@ parts = [
     'wrap/hmpsum.h', 'wrap/hprod.h',
     'array_sum.h', 'arrays_msum.h',
     'array_and.h', 'array_or.h', 'array_xor.h',
-    'array_mul_pair_sum.h',
+    'array_mul_pair_sum.h', 'array_product.h',
     'array_find_max.h', 'array_find_min.h',
+    'array_find_first.h',
     'arrays_add.h', 'arrays_mul.h', 'arrays_and.h',
     'arrays_add_abs.h',
     'footer.h'
@@ -27,9 +28,10 @@ arrays_binary_ops = [
     ]
 
 array_reduction_ops = [
-    ['array_or.h', 'or', 'tvx::hor(sv)[0]', '|', '0'],
-    ['array_and.h', 'and', 'tvx::hand(sv)[0]', '&', '~0ul'],
-    ['array_xor.h', 'xor', 'tvx::hxor(sv)[0]', '^', '0'],
+    ['array_or.h', 'or', 'tvx::hor', '|', '0'],
+    ['array_and.h', 'and', 'tvx::hand', '&', '~0ul'],
+    ['array_xor.h', 'xor', 'tvx::hxor', '^', '0'],
+    ['array_product.h', 'product', 'vil::insn::hprod', '*', '1'],
     ]
 
 def agglomerate(wrkdir: Path, parts: []):

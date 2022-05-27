@@ -7,16 +7,18 @@ static bool test1()
 {
     static const std::size_t SIZE = 8*3 + 3;
 
-    std::array<uint64_t, SIZE> array;
+    std::array<double, SIZE> array;
+    double prod{1};
 
     for (std::size_t i = 0; i < SIZE; ++i) {
-        array[i] = (1ul << i);
+        array[i] = i + 1;
+        prod *= array[i];
     }
 
-    uint64_t res = vil::array_or<uint64_t>(array);
+    double res = vil::array_product<double>(array);
 
-    ASSERT(res == ((1ul << SIZE) - 1),
-        "fail %lx vs %lx", res, ((1ul << SIZE) - 1));
+    ASSERT(res == prod,
+        "fail %f vs %f", res, prod);
 
     return true;
 }

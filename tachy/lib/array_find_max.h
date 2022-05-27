@@ -1,13 +1,14 @@
 /// Find element with maximum value.
 ///
 ///
-template<typename T, typename TRes=T>
-TRes array_find_max(const T* array, std::size_t nr_elem)
+template<typename T, std::size_t VLEN = 512>
+T array_find_max(const T* array, std::size_t nr_elem)
 {
-    array_info<T> a(nr_elem);
-    using VT = array_info<T>::VT;
+    using AI = array_info<T,VLEN>;
+    AI a(nr_elem);
+    using VT = AI::VT;
 
-    TRes maxel {array[0]};
+    T maxel {array[0]};
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v = *(VT*)&array[i*a.NR_ELEM];
@@ -22,9 +23,9 @@ TRes array_find_max(const T* array, std::size_t nr_elem)
     return maxel;
 }
 
-template<typename T, typename TRes=T>
-TRes array_find_max(std::span<const T> array)
+template<typename T, std::size_t VLEN = 512>
+T array_find_max(std::span<const T> array)
 {
-    return vil::array_find_max(array.data(), array.size());
+    return vil::array_find_max<T,VLEN>(array.data(), array.size());
 }
 
