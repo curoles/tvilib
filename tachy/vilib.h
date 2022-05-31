@@ -170,6 +170,57 @@ VT hprod(VT v)
 }
 
 }
+namespace insn {
+
+template<typename VT, std::size_t VLEN>
+VT vfill(typename tvx::get_base<VT>::type v)
+{
+    using T = tvx::get_base<VT>::type;
+    //FIXME static_assert(T and Tv are the same type)
+
+    if constexpr(VLEN == 512) {
+        if constexpr(sizeof(T) == sizeof(uint64_t))
+            return tvx::__vx512_fill_l(v);
+        else if constexpr(sizeof(T) == sizeof(uint32_t))
+            return tvx::__vx512_fill_w(v);
+        else if constexpr(sizeof(T) == sizeof(uint16_t))
+            return tvx::__vx512_fill_h(v);
+        else if constexpr(sizeof(T) == sizeof(uint8_t))
+            return tvx::__vx512_fill_b(v);
+    }
+    else if constexpr(VLEN == 256) {
+        if constexpr(sizeof(T) == sizeof(uint64_t))
+            return tvx::__vx256_fill_l(v);
+        else if constexpr(sizeof(T) == sizeof(uint32_t))
+            return tvx::__vx256_fill_w(v);
+        else if constexpr(sizeof(T) == sizeof(uint16_t))
+            return tvx::__vx256_fill_h(v);
+        else if constexpr(sizeof(T) == sizeof(uint8_t))
+            return tvx::__vx256_fill_b(v);
+    }
+
+}
+
+}
+namespace insn {
+
+template<typename VT>
+VT vmadd(VT a, VT b, VT c)
+{
+    using T = tvx::get_base<VT>::type;
+
+    if constexpr(std::is_floating_point<T>::value) {
+        return tvx::vmadd(a, b, c);
+    }
+    else if constexpr(std::is_signed<T>::value) {
+        return tvx::vmadds(a, b, c);
+    }
+    else {
+        return tvx::vmadd(a, b, c);
+    }
+}
+
+}
 /// Sum of all elements.
 ///
 /// It is recommended to use
