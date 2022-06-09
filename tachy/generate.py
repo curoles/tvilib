@@ -10,6 +10,7 @@ parts = [
     'header.h',
     'wrap/hsum.h', 'wrap/hmsum.h', 'wrap/hmax.h', 'wrap/hmin.h',
     'wrap/hmpsum.h', 'wrap/hprod.h', 'wrap/vfill.h', 'wrap/vmadd.h',
+    'wrap/pmov.h',
     'array_sum.h', 'arrays_msum.h',
     'array_and.h', 'array_or.h', 'array_xor.h',
     'array_mul_pair_sum.h', 'array_product.h',
