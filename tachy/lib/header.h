@@ -30,6 +30,14 @@ vld(__mask_t a, F64x8* b) {
 }
 
 using pmask_t = __mask_t;
+
+static inline pmask_t
+__attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
+_pmask(int a)
+{
+    return (__mask_t) __builtin_tachy_pmask(a);
+}
+
 }
 
 namespace vil {

@@ -30,6 +30,14 @@ vld(__mask_t a, F64x8* b) {
 }
 
 using pmask_t = __mask_t;
+
+static inline pmask_t
+__attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
+_pmask(int a)
+{
+    return (__mask_t) __builtin_tachy_pmask(a);
+}
+
 }
 
 namespace vil {
@@ -223,7 +231,6 @@ VT vmadd(VT a, VT b, VT c)
 }
 namespace insn {
 
-// http://isa.tachyum.com/isa/13.16.3
 //
 // “r” is a GPR “x” is a FPR/VPR and “Yp” is a predicate reg
 //
@@ -655,8 +662,8 @@ array_find_first(const T val, const T* array, std::size_t nr_elem)
 
     for (std::size_t i = 0; i < a.nr_chunks; ++i) {
         VT v = *(VT*)&array[i*a.NR_ELEM];
-        VT res = tvx::veq(v, vv);
 #if 1
+        VT res = tvx::veq(v, vv);
         for (std::size_t j = 0; j < a.NR_ELEM; ++j) {
 //printf("-- %lu:%lu: %lu=%lu cmp %lu\n", i, j, res[j], v[j], vv[j]);
             if (res[j] != 0) {
@@ -664,9 +671,12 @@ array_find_first(const T val, const T* array, std::size_t nr_elem)
             }
         }
 #else
-        veq to predicate
-        pmov gpr <-predicate
-        __builtin_ctz(mask)
+        tvx::pmask_t mask = vil::insn::veq2p(v, vv)
+        uint64_t bits = mov_p2r(tvx::pmask_t src);
+        if (bits) {
+            ? = __builtin_ctz(bits);
+            return ?;
+        }
 #endif
     }
 
